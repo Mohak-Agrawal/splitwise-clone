@@ -54,17 +54,48 @@ const Dashboard: React.FC = () => {
       });
     });
 
+    const netAmounts: Record<string, number> = {};
+
+    // Iterate through transactions to calculate net amounts
+    Object.entries(transactions).forEach(([friend, transactionsArray]) => {
+      transactionsArray.forEach(({ amount }) => {
+        netAmounts[friend] = (netAmounts[friend] || 0) + amount;
+      });
+    });
+
+    console.log({ netAmounts });
+
+    const amountsOwedByMe: Record<string, number> = {};
+    const amountsOwedToMe: Record<string, number> = {};
+
+    Object.entries(netAmounts).forEach(([friend, amount]) => {
+      if (amount > 0) {
+        // If amount is positive, it means you owe the friend
+        amountsOwedToMe[friend] = amount;
+      } else if (amount < 0) {
+        // If amount is negative, it means the friend owes you
+        amountsOwedByMe[friend] = Math.abs(amount);
+      }
+    });
+
+    console.log({ amountsOwedByMe });
+    console.log({ amountsOwedToMe });
+
     return {
       transactions,
-      owedByMe,
-      owedToMe,
+      // owedByMe,
+      // owedToMe,
+      amountsOwedByMe,
+      amountsOwedToMe,
     };
   };
 
   const {
     transactions,
-    owedByMe: amountsOwedByMe,
-    owedToMe: amountsOwedToMe,
+    // owedByMe: amountsOwedByMe,
+    // owedToMe: amountsOwedToMe,
+    amountsOwedByMe,
+    amountsOwedToMe,
   } = calculateAmounts();
   console.log(transactions);
   // Calculate the absolute total amount owed by you
