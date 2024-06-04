@@ -4,7 +4,7 @@ import AddFriendForm from "./AddFriendForm";
 import { ExpenseContext } from "../contexts/ExpenseContext";
 
 const Dashboard: React.FC = () => {
-  const { expenses, friends } = useContext(ExpenseContext);
+  const { expenses, friends, theme } = useContext(ExpenseContext);
   const [loading, setLoading] = useState(false);
 
   console.log("expenses", expenses);
@@ -93,16 +93,38 @@ const Dashboard: React.FC = () => {
   return loading ? (
     <div>Loading...</div>
   ) : (
-    <div className="flex-grow bg-white shadow-xl border-x border-[#CFCFCF]">
-      <div className="border-b border-[#DDDDDD] p-4 flex flex-row items-center justify-between bg-[#eeeeee]">
-        <h1 className="text-2xl font-bold text-center">Dashboard</h1>
+    <div
+      className={`flex-grow bg-${
+        theme === "dark" ? "gray-900" : "white"
+      } shadow-xl border-x border-[#CFCFCF]`}
+    >
+      <div
+        className={`border-b border-${
+          theme === "dark" ? "gray-800" : "[#DDDDDD]"
+        } p-4 flex flex-row items-center justify-between bg-${
+          theme === "dark" ? "gray-800" : "[#eeeeee]"
+        }`}
+      >
+        <h1
+          className={`text-2xl font-bold text-center text-${
+            theme === "dark" ? "white" : "black"
+          }`}
+        >
+          Dashboard
+        </h1>
         <div className="flex flex-row items-center">
           <ExpenseForm />
           <AddFriendForm />
           {/* SettleUpForm goes here */}
         </div>
       </div>
-      <div className="border-b border-[#DDDDDD] p-2 flex flex-row items-center justify-between bg-[#eeeeee]">
+      <div
+        className={`border-b border-${
+          theme === "dark" ? "gray-800" : "[#DDDDDD]"
+        } p-2 flex flex-row items-center justify-between bg-${
+          theme === "dark" ? "gray-800" : "[#eeeeee]"
+        }`}
+      >
         <div className="grid grid-cols-3 gap-x-4 w-full">
           <div className="border-r border-[#DDDDDD] items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">Total balance</p>
@@ -142,12 +164,23 @@ const Dashboard: React.FC = () => {
       </div>
       <div className="flex flex-row justify-between p-4">
         <div className="w-full">
-          <h2 className="text-xl font-semibold text-[#a4a4a4] mb-4">You Owe</h2>
+          <h2
+            className={`text-xl font-semibold text-${
+              theme === "dark" ? "white" : "[#a4a4a4]"
+            } mb-4`}
+          >
+            You Owe
+          </h2>
           <ul>
             {Object.entries(amountsOwedByMe).map(
               ([friendName, amount], index) => (
-                <li key={index} className="border-r flex flex-col  items-start">
-                  <p className="text-md text-black">{friendName}</p>
+                <li
+                  key={index}
+                  className={`border-r flex flex-col items-start ${
+                    theme === "dark" ? "text-white" : "text-black"
+                  }`}
+                >
+                  <p className="text-md">{friendName}</p>
                   <p
                     className={`text-md ${
                       amount > 0 ? "text-red-500" : "text-green-500"
@@ -161,14 +194,23 @@ const Dashboard: React.FC = () => {
           </ul>
         </div>
         <div className="w-full">
-          <h2 className="text-xl font-semibold text-[#a4a4a4] mb-4 text-right">
+          <h2
+            className={`text-xl font-semibold text-${
+              theme === "dark" ? "white" : "[#a4a4a4]"
+            } mb-4`}
+          >
             You Are Owed
           </h2>
           <ul>
             {Object.entries(amountsOwedToMe).map(
               ([friendName, amount], index) => (
-                <li key={index} className=" flex flex-col items-end">
-                  <p className="text-md text-black">{friendName}</p>
+                <li
+                  key={index}
+                  className={` flex flex-col items-end ${
+                    theme === "dark" ? "text-white" : "text-black"
+                  }`}
+                >
+                  <p className="text-md">{friendName}</p>
                   <p
                     className={`text-md ${
                       amount > 0 ? "text-green-500" : "text-red-500"

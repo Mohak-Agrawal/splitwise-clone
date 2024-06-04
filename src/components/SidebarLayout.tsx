@@ -12,10 +12,6 @@ const SidebarLayout: React.FC = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
   const Header = () => (
     <header
       className={`bg-[#5ac4a6] text-white p-1 flex justify-center items-center shadow-lg ${
@@ -75,38 +71,12 @@ const SidebarLayout: React.FC = () => {
   const Footer = () => (
     <button
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center"
+      className="fixed bottom-4 right-4 bg-white shadow-lg border p-2 text-white rounded-full w-12 h-12 flex items-center justify-center"
     >
-      {darkMode ? (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 1v2m0 18v2m-5-5H1m18 0h-6m5 0a9 9 0 01-9-9c0-3.683 2.214-6.956 5.623-8.348a1 1 0 011.237.829V6.5a1.5 1.5 0 001.5 1.5h3a1.5 1.5 0 001.5-1.5V4.98a1 1 0 011.237-.828C18.786 4.544 21 7.817 21 11a9 9 0 01-9 9z"
-          />
-        </svg>
+      {theme == "dark" ? (
+        <img src="https://cdn-icons-png.freepik.com/512/9937/9937122.png" />
       ) : (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10h14a1 1 0 010 2H5a1 1 0 010-2zM5 6h14a1 1 0 010 2H5a1 1 0 010-2zM5 14h14a1 1 0 010 2H5a1 1 0 010-2zM19 16a2 2 0 01-2 2H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v8z"
-          />
-        </svg>
+        <img src="https://cdn-icons-png.freepik.com/512/6714/6714978.png" />
       )}
     </button>
   );

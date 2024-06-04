@@ -10,7 +10,7 @@ interface Option {
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = () => {
-  const { friends } = useContext(ExpenseContext);
+  const { friends, theme } = useContext(ExpenseContext);
   const { addExpense } = useContext(ExpenseContext);
   const [formData, setFormData] = useState({
     description: "",
