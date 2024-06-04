@@ -155,7 +155,9 @@ export const ExpenseProvider: React.FC<{ children: ReactNode }> = ({
         toggleTheme,
       }}
     >
-      {children}
+      <div className={theme === "light" ? "bg-white" : "bg-gray-900"}>
+        {children}
+      </div>
     </ExpenseContext.Provider>
   );
 };

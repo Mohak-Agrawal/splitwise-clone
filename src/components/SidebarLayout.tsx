@@ -6,7 +6,7 @@ import { ExpenseContext } from "../contexts/ExpenseContext";
 const SidebarLayout: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const { friends, addFriend } = useContext(ExpenseContext);
+  const { friends, addFriend, toggleTheme, theme } = useContext(ExpenseContext);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -74,7 +74,7 @@ const SidebarLayout: React.FC = () => {
 
   const Footer = () => (
     <button
-      onClick={toggleDarkMode}
+      onClick={toggleTheme}
       className="fixed bottom-4 right-4 bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center"
     >
       {darkMode ? (
@@ -113,21 +113,38 @@ const SidebarLayout: React.FC = () => {
 
   return (
     <ModalProvider>
-      <div
-        className={`h-screen w-screen flex flex-col ${darkMode ? "dark" : ""}`}
-      >
+      <div className={`h-screen w-screen flex flex-col ${theme ? "dark" : ""}`}>
         <Header />
         <div className="w-2/3 flex flex-row self-center h-screen">
-          <div className="w-48 bg-gray-100">
-            My Friends
+          <div
+            className={`w-48 bg-${
+              theme === "dark" ? "gray-800" : "gray-100"
+            } p-4 flex flex-col items-center`}
+          >
+            <div
+              className={`border-b mb-2 text-${
+                theme === "dark" ? "white" : "black"
+              }`}
+            >
+              My Friends
+            </div>
             <ul>
               {friends.map((friend, index) => (
-                <li key={index}>{friend.name}</li>
+                <li
+                  key={index}
+                  className={`text-${theme === "dark" ? "white" : "black"}`}
+                >
+                  {friend.name}
+                </li>
               ))}
             </ul>
           </div>
           <Dashboard />
-          <div className="w-48 bg-gray-100"></div>
+          <div
+            className={`w-48 bg-${
+              theme === "dark" ? "gray-800" : "gray-100"
+            } p-4 flex flex-col items-center`}
+          ></div>
         </div>
 
         <Footer />

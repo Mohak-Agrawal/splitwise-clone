@@ -133,8 +133,8 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
                   }
                 >
                   <option value="equal">Split Equally</option>
-                  <option value="exclude">Exclude</option>
-                  <option value="me">Me</option>
+                  {/* <option value="exclude">Exclude</option>
+                  <option value="me">Me</option> */}
                 </select>
               </div>
               <div className="mb-4">
