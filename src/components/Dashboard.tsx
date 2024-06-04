@@ -14,27 +14,31 @@ const Dashboard: React.FC = () => {
     fetchGroupData();
   }, []);
 
+  useEffect(() => {
+    const data = localStorage.getItem("expenseFormData");
+    if (data) {
+      const parsedData = JSON.parse(data);
+      console.log({ parsedData });
+    }
+  }, []);
+
   const fetchGroupData = () => {
-    // Check if group data exists in local storage
     const storedGroupData = localStorage.getItem("groupData");
     if (storedGroupData) {
       setGroup(JSON.parse(storedGroupData));
       setLoading(false);
     } else {
-      // Simulate loading data from an API
       setTimeout(() => {
         const fetchedGroupData = {
           friends: ["Friend 1", "Friend 2", "Friend 3"],
         };
         setGroup(fetchedGroupData);
         setLoading(false);
-        // Store fetched group data in local storage
         localStorage.setItem("groupData", JSON.stringify(fetchedGroupData));
-      }, 1000); // Simulate 1 second delay
+      }, 1000);
     }
   };
 
-  // Hypothetical data for amounts owed and owing
   const amountsOwed: Record<string, number> = {
     "Friend 1": 10,
     "Friend 2": 5,
@@ -47,6 +51,15 @@ const Dashboard: React.FC = () => {
     "Friend 3": 5,
   };
 
+  const totalOwed = Object.values(amountsOwed).reduce(
+    (acc, amount) => acc + amount,
+    0
+  );
+  const totalOwing = Object.values(amountsOwing).reduce(
+    (acc, amount) => acc + amount,
+    0
+  );
+
   return loading ? (
     <div>Loading...</div>
   ) : (
@@ -56,29 +69,30 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-row items-center">
           <ExpenseForm friends={group.friends} />
           <SettleUpForm friends={group.friends} />
-          {/* <button>Settle Up</button> */}
         </div>
       </div>
       <div className="border-b border-[#DDDDDD] p-2 flex flex-row items-center justify-between bg-[#eeeeee]">
         <div className="grid grid-cols-3 gap-x-4 w-full">
           <div className="border-r border-[#DDDDDD] items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">total balance</p>
-            <p className="text-[#A8A8A8] text-sm font-medium">$0.00</p>
+            <p className="text-[#A8A8A8] text-sm font-medium">
+              ${totalOwing - totalOwed}
+            </p>
           </div>
           <div className="border-r border-[#DDDDDD] items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">you owe</p>
-            <p className="text-[#A8A8A8] text-sm font-medium">$0.00</p>
+            <p className="text-[#A8A8A8] text-sm font-medium">${totalOwed}</p>
           </div>
           <div className="items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">you are owed</p>
-            <p className="text-[#A8A8A8] text-sm font-medium">$0.00</p>
+            <p className="text-[#A8A8A8] text-sm font-medium">${totalOwing}</p>
           </div>
         </div>
       </div>
       <div className="flex flex-row justify-between p-4">
         <div className="w-full">
           <h2 className="text-xl font-semibold text-[#a4a4a4] mb-4">You Owe</h2>
-          <ul className="">
+          <ul>
             {group.friends.map((friend, index) => (
               <li key={index} className="border-r mr-2 flex flex-col">
                 <p className="text-md text-black">{friend}</p>

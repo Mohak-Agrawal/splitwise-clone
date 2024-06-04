@@ -8,11 +8,6 @@ import store from "./redux/store";
 import { Provider } from "react-redux";
 
 const App: React.FC = () => {
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("expenseFormData"));
-    console.log({ data });
-  }, []);
-
   return (
     <Provider store={store}>
       <ThemeProvider>
