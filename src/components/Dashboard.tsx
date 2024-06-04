@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ExpenseForm from "./ExpenseForm";
 import { ModalProvider } from "react-modal-hook";
+import SettleUpForm from "./SettleUpForm";
 
 interface Group {
   friends: string[];
@@ -11,6 +12,10 @@ const Dashboard: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [isExpenseFormOpen, setIsExpenseFormOpen] = useState(false);
   const [group, setGroup] = useState<Group>({ friends: [] });
+
+  useEffect(() => {
+    fetchGroupData();
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -82,10 +87,28 @@ const Dashboard: React.FC = () => {
             <h1 className="text-3xl font-bold text-center">Dashboard</h1>
             <div className="flex flex-row items-center">
               <ExpenseForm friends={group.friends} />
+              <SettleUpForm friends={group.friends} />
               {/* <button>Settle Up</button> */}
             </div>
           </div>
-          {/* render list here with 2 column first column is "You Owe" & second is "You are Owed" */}
+          <div className="flex flex-row justify-between p-4">
+            <div>
+              <h2 className="text-xl font-semibold">You Owe</h2>
+              <ul>
+                {group.friends.map((friend, index) => (
+                  <li key={index}>{friend}: $X</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">You Are Owed</h2>
+              <ul>
+                {group.friends.map((friend, index) => (
+                  <li key={index}>{friend}: $X</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
         <button
           onClick={toggleDarkMode}
