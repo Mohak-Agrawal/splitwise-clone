@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { ModalProvider } from "react-modal-hook";
 import Dashboard from "./Dashboard";
+import { ExpenseContext } from "../contexts/ExpenseContext";
 
 const SidebarLayout: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const { friends } = useContext(ExpenseContext); // Access the addFriend function from ExpenseContext
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -116,7 +118,9 @@ const SidebarLayout: React.FC = () => {
       >
         <Header />
         <div className="w-2/3 flex flex-row self-center h-screen">
-          <div className="w-48 bg-gray-100"></div>
+          <div className="w-48 bg-gray-100">
+            {/* fetch friend list here and also have a button to add friend above list */}
+          </div>
           <Dashboard />
           <div className="w-48 bg-gray-100"></div>
         </div>

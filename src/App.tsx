@@ -1,25 +1,22 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Settings from "./components/Settings";
+// import Settings from "./components/Settings";
 // import Group from "./components/Group";
-import ThemeProvider from "./contexts/ThemeContext";
 import SidebarLayout from "./components/SidebarLayout";
-import store from "./redux/store";
-import { Provider } from "react-redux";
+
+import { ExpenseProvider } from "./contexts/ExpenseContext";
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<SidebarLayout />} />
-            <Route path="/settings" element={<Settings />} />
-            {/* <Route path="/group" element={<Group />} /> */}
-          </Routes>
-        </Router>
-      </ThemeProvider>
-    </Provider>
+    <ExpenseProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<SidebarLayout />} />
+          {/* <Route path="/settings" element={<Settings />} /> */}
+          {/* <Route path="/group" element={<Group />} /> */}
+        </Routes>
+      </Router>
+    </ExpenseProvider>
   );
 };
 

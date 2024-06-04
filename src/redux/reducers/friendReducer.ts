@@ -1,8 +1,7 @@
-// src/redux/reducers/friendReducer.ts
 import {
+  FriendAction,
   FriendActionTypes,
   FriendState,
-  FriendAction,
 } from "../types/friendTypes";
 
 const initialState: FriendState = {
@@ -14,15 +13,20 @@ const friendReducer = (
   action: FriendAction
 ): FriendState => {
   switch (action.type) {
-    case FriendActionTypes.ADD_FRIEND:
+    case FriendActionTypes.FETCH_FRIENDS_SUCCESS:
       return {
         ...state,
-        friends: [...state.friends, action.payload],
+        friends: action.payload, // Ensure action.payload exists
       };
-    case FriendActionTypes.REMOVE_FRIEND:
+    case FriendActionTypes.ADD_FRIEND_SUCCESS:
       return {
         ...state,
-        friends: state.friends.filter((friend) => friend.id !== action.payload),
+        friends: [...state.friends, action.payload], // Ensure action.payload exists
+      };
+    case FriendActionTypes.REMOVE_FRIEND_SUCCESS:
+      return {
+        ...state,
+        friends: state.friends.filter((friend) => friend.id !== action.payload), // Ensure action.payload exists
       };
     default:
       return state;

@@ -1,4 +1,3 @@
-// src/redux/types/friendTypes.ts
 export interface Friend {
   id: string;
   name: string;
@@ -9,18 +8,66 @@ export interface FriendState {
 }
 
 export enum FriendActionTypes {
-  ADD_FRIEND = "ADD_FRIEND",
-  REMOVE_FRIEND = "REMOVE_FRIEND",
+  FETCH_FRIENDS_REQUEST = "FETCH_FRIENDS_REQUEST",
+  FETCH_FRIENDS_SUCCESS = "FETCH_FRIENDS_SUCCESS",
+  FETCH_FRIENDS_FAILURE = "FETCH_FRIENDS_FAILURE",
+  ADD_FRIEND_REQUEST = "ADD_FRIEND_REQUEST",
+  ADD_FRIEND_SUCCESS = "ADD_FRIEND_SUCCESS",
+  ADD_FRIEND_FAILURE = "ADD_FRIEND_FAILURE",
+  REMOVE_FRIEND_REQUEST = "REMOVE_FRIEND_REQUEST",
+  REMOVE_FRIEND_SUCCESS = "REMOVE_FRIEND_SUCCESS",
+  REMOVE_FRIEND_FAILURE = "REMOVE_FRIEND_FAILURE",
 }
 
-interface AddFriendAction {
-  type: typeof FriendActionTypes.ADD_FRIEND;
+interface FetchFriendsRequestAction {
+  type: FriendActionTypes.FETCH_FRIENDS_REQUEST;
+}
+
+interface FetchFriendsSuccessAction {
+  type: FriendActionTypes.FETCH_FRIENDS_SUCCESS;
+  payload: Friend[];
+}
+
+interface FetchFriendsFailureAction {
+  type: FriendActionTypes.FETCH_FRIENDS_FAILURE;
+  error: string;
+}
+
+interface AddFriendRequestAction {
+  type: FriendActionTypes.ADD_FRIEND_REQUEST;
+}
+
+interface AddFriendSuccessAction {
+  type: FriendActionTypes.ADD_FRIEND_SUCCESS;
   payload: Friend;
 }
 
-interface RemoveFriendAction {
-  type: typeof FriendActionTypes.REMOVE_FRIEND;
-  payload: string; // Friend ID
+interface AddFriendFailureAction {
+  type: FriendActionTypes.ADD_FRIEND_FAILURE;
+  error: string;
 }
 
-export type FriendAction = AddFriendAction | RemoveFriendAction;
+interface RemoveFriendRequestAction {
+  type: FriendActionTypes.REMOVE_FRIEND_REQUEST;
+}
+
+interface RemoveFriendSuccessAction {
+  type: FriendActionTypes.REMOVE_FRIEND_SUCCESS;
+  payload: string; // ID of the friend to remove
+}
+
+interface RemoveFriendFailureAction {
+  type: FriendActionTypes.REMOVE_FRIEND_FAILURE;
+  error: string;
+}
+
+export type FriendAction =
+  | FetchFriendsRequestAction
+  | FetchFriendsSuccessAction
+  | FetchFriendsFailureAction
+  | AddFriendRequestAction
+  | AddFriendSuccessAction
+  | AddFriendFailureAction
+  | RemoveFriendRequestAction
+  | RemoveFriendSuccessAction
+  | RemoveFriendFailureAction;

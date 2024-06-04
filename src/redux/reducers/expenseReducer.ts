@@ -1,7 +1,6 @@
-// src/redux/reducers/expenseReducer.ts
 import {
-  ExpenseActionTypes,
   ExpenseState,
+  ExpenseActionTypes,
   ExpenseAction,
 } from "../types/expenseTypes";
 
@@ -14,6 +13,11 @@ const expenseReducer = (
   action: ExpenseAction
 ): ExpenseState => {
   switch (action.type) {
+    case ExpenseActionTypes.FETCH_EXPENSES_SUCCESS:
+      return {
+        ...state,
+        expenses: action.payload,
+      };
     case ExpenseActionTypes.ADD_EXPENSE:
       return {
         ...state,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ExpenseForm from "./ExpenseForm";
 import SettleUpForm from "./SettleUpForm";
+import AddFriendForm from "./AddFriendForm";
 
 interface Group {
   friends: string[];
@@ -8,36 +9,7 @@ interface Group {
 
 const Dashboard: React.FC = () => {
   const [group, setGroup] = useState<Group>({ friends: [] });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchGroupData();
-  }, []);
-
-  useEffect(() => {
-    const data = localStorage.getItem("expenseFormData");
-    if (data) {
-      const parsedData = JSON.parse(data);
-      console.log({ parsedData });
-    }
-  }, []);
-
-  const fetchGroupData = () => {
-    const storedGroupData = localStorage.getItem("groupData");
-    if (storedGroupData) {
-      setGroup(JSON.parse(storedGroupData));
-      setLoading(false);
-    } else {
-      setTimeout(() => {
-        const fetchedGroupData = {
-          friends: ["Friend 1", "Friend 2", "Friend 3"],
-        };
-        setGroup(fetchedGroupData);
-        setLoading(false);
-        localStorage.setItem("groupData", JSON.stringify(fetchedGroupData));
-      }, 1000);
-    }
-  };
+  const [loading, setLoading] = useState(false);
 
   const amountsOwed: Record<string, number> = {
     "Friend 1": 10,
@@ -68,6 +40,7 @@ const Dashboard: React.FC = () => {
         <h1 className="text-2xl font-bold text-center">Dashboard</h1>
         <div className="flex flex-row items-center">
           <ExpenseForm friends={group.friends} />
+          <AddFriendForm />
           <SettleUpForm friends={group.friends} />
         </div>
       </div>
