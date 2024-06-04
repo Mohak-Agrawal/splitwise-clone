@@ -27,11 +27,17 @@ const Dashboard: React.FC = () => {
           const amountToChange = paidBy === you ? splitAmount : -splitAmount;
 
           if (friend === you) {
-            owedByMe[paidBy] = (owedByMe[paidBy] || 0) + amountToChange;
-            if (amountToChange > 0) youOwe[paidBy] = amountToChange;
+            if (amountToChange > 0) {
+              youOwe[paidBy] = (youOwe[paidBy] || 0) + amountToChange;
+            } else {
+              youAreOwed[paidBy] = (youAreOwed[paidBy] || 0) - amountToChange;
+            }
           } else if (paidBy === you) {
-            owedToMe[friend] = (owedToMe[friend] || 0) + amountToChange;
-            if (amountToChange > 0) youAreOwed[friend] = amountToChange;
+            if (amountToChange > 0) {
+              youAreOwed[friend] = (youAreOwed[friend] || 0) + amountToChange;
+            } else {
+              youOwe[friend] = (youOwe[friend] || 0) - amountToChange;
+            }
           } else {
             owedByMe[friend] = (owedByMe[friend] || 0) + amountToChange;
             owedToMe[paidBy] = (owedToMe[paidBy] || 0) + amountToChange;
