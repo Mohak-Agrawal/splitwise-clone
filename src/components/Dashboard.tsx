@@ -7,51 +7,74 @@ const Dashboard: React.FC = () => {
   const { expenses, friends } = useContext(ExpenseContext);
   const [loading, setLoading] = useState(false);
 
+  console.log("expenses", expenses);
+
   const calculateAmounts = () => {
+    const you = "me";
+
     const owedByMe: Record<string, number> = {};
     const owedToMe: Record<string, number> = {};
+    const youOwe: Record<string, number> = {};
+    const youAreOwed: Record<string, number> = {};
+    const allFriends: Record<string, number> = {};
 
     expenses.forEach((expense) => {
       const { amount, friends: expenseFriends, splitOption, paidBy } = expense;
       const splitAmount = amount / (expenseFriends.length + 1);
 
       expenseFriends.forEach((friend) => {
-        if (
-          splitOption === "equal" ||
-          (splitOption === "exclude" && friend !== paidBy)
-        ) {
-          if (paidBy === "me") {
-            owedToMe[friend] = (owedToMe[friend] || 0) + splitAmount;
-          } else if (friend === "me") {
-            owedByMe[paidBy] = (owedByMe[paidBy] || 0) + splitAmount;
+        if (friend !== paidBy || splitOption === "equal") {
+          const amountToChange = paidBy === you ? splitAmount : -splitAmount;
+
+          if (friend === you) {
+            owedByMe[paidBy] = (owedByMe[paidBy] || 0) + amountToChange;
+            if (amountToChange > 0) youOwe[paidBy] = amountToChange;
+          } else if (paidBy === you) {
+            owedToMe[friend] = (owedToMe[friend] || 0) + amountToChange;
+            if (amountToChange > 0) youAreOwed[friend] = amountToChange;
           } else {
-            owedByMe[friend] = (owedByMe[friend] || 0) + splitAmount;
-            owedToMe[paidBy] = (owedToMe[paidBy] || 0) + splitAmount;
+            owedByMe[friend] = (owedByMe[friend] || 0) + amountToChange;
+            owedToMe[paidBy] = (owedToMe[paidBy] || 0) + amountToChange;
+            if (amountToChange > 0) allFriends[friend] = amountToChange;
+            if (amountToChange < 0) allFriends[paidBy] = -amountToChange;
           }
         }
       });
     });
 
-    const netAmounts: Record<string, number> = {};
+    const totalBalance =
+      Object.values(owedByMe).reduce((acc, amount) => acc + amount, 0) -
+      Object.values(owedToMe).reduce((acc, amount) => acc + amount, 0);
 
-    friends.forEach((friend) => {
-      netAmounts[friend.name] =
-        (owedByMe[friend.name] || 0) - (owedToMe[friend.name] || 0);
-    });
-
-    const totalNetAmount = Object.values(netAmounts).reduce(
-      (acc, amount) => acc + amount,
-      0
-    );
-
-    return { owedByMe, owedToMe, totalNetAmount };
+    return {
+      totalBalance,
+      owedByMe,
+      owedToMe,
+      youOwe,
+      youAreOwed,
+      allFriends,
+    };
   };
 
   const {
     owedByMe: amountsOwedByMe,
     owedToMe: amountsOwedToMe,
-    totalNetAmount,
+    totalBalance: totalNetAmount,
   } = calculateAmounts();
+
+  // Calculate the absolute total amount owed by you
+  const totalOwedByYou = Math.abs(
+    Object.values(amountsOwedByMe).reduce((total, amount) => total + amount, 0)
+  );
+
+  // Calculate the absolute total amount owed to you
+  const totalOwedToYou = Math.abs(
+    Object.values(amountsOwedToMe).reduce((total, amount) => total + amount, 0)
+  );
+
+  console.log("Total amount owed by you:", totalOwedByYou);
+  console.log("Total amount owed to you:", totalOwedToYou);
+  const balanceAmount = totalOwedToYou - totalOwedByYou;
 
   return loading ? (
     <div>Loading...</div>
@@ -69,28 +92,36 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-3 gap-x-4 w-full">
           <div className="border-r border-[#DDDDDD] items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">Total balance</p>
-            <p className="text-[#A8A8A8] text-sm font-medium">
-              ${totalNetAmount}
+            <p
+              className={`text-[#A8A8A8] text-sm font-medium ${
+                balanceAmount > 0
+                  ? "text-green-500"
+                  : balanceAmount < 0
+                  ? "text-red-500"
+                  : "text-[#A8A8A8]"
+              }`}
+            >
+              ${balanceAmount}
             </p>
           </div>
           <div className="border-r border-[#DDDDDD] items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">You owe</p>
             <p
               className={`text-[#A8A8A8] text-sm font-medium ${
-                totalNetAmount > 0 ? "text-red-500" : "text-green-500"
+                totalOwedByYou > 0 ? "text-red-500" : "text-[#A8A8A8]"
               }`}
             >
-              ${Math.abs(totalNetAmount)}
+              ${Math.abs(totalOwedByYou)}
             </p>
           </div>
           <div className="items-center justify-center flex flex-col">
             <p className="text-[#A8A8A8] text-sm font-medium">You are owed</p>
             <p
               className={`text-[#A8A8A8] text-sm font-medium ${
-                totalNetAmount > 0 ? "text-green-500" : "text-red-500"
+                totalOwedToYou > 0 ? "text-green-500" : "text-[#A8A8A8]"
               }`}
             >
-              ${Math.abs(totalNetAmount)}
+              ${Math.abs(totalOwedToYou)}
             </p>
           </div>
         </div>
