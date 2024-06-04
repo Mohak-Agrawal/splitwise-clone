@@ -88,7 +88,7 @@ const SettleUpForm: React.FC<SettleUpFormProps> = ({ friends }) => {
     <div>
       <button
         onClick={showModal}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        className="bg-[#5ac5a6] hover:bg-[#47bf9d] shadow-sm text-white text-sm font-semibold py-2 px-4 rounded ml-2"
       >
         Settle Up
       </button>

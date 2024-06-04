@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useModal } from "react-modal-hook";
 
 interface ExpenseFormProps {
@@ -6,14 +6,38 @@ interface ExpenseFormProps {
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
+  const [formData, setFormData] = useState({
+    description: "",
+    amount: "", // Changed from number to string to correctly handle input
+    selectedFriends: [] as string[],
+  });
+
   // Logic for handling form submission
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Save form data to local storage
+    localStorage.setItem("expenseFormData", JSON.stringify(formData));
+    // Close modal
+    hideModal();
+  };
+
+  // Load form data from local storage on component mount
+  useEffect(() => {
+    const savedData = localStorage.getItem("expenseFormData");
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    }
+  }, []);
 
   const [showModal, hideModal] = useModal(() => (
     <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Add an Expense</h2>
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+        <div className="p-2 bg-[#5ac4a6] rounded-t-lg">
+          <h2 className="text-xl text-white font-bold">Add an Expense</h2>
+        </div>
+
         {/* Form content goes here */}
-        <form>
+        <form onSubmit={handleSubmit} className="p-4">
           <div className="mb-4">
             <label
               htmlFor="description"
@@ -26,6 +50,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
               id="description"
               name="description"
               className="w-full border border-gray-300 p-2 rounded-md"
+              value={formData.description}
+              onChange={(e) => {
+                setFormData({ ...formData, description: e.target.value });
+              }}
             />
           </div>
           <div className="mb-4">
@@ -40,6 +68,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
               id="amount"
               name="amount"
               className="w-full border border-gray-300 p-2 rounded-md"
+              value={formData.amount}
+              onChange={(e) =>
+                setFormData({ ...formData, amount: e.target.value })
+              }
             />
           </div>
           {/* Add more form fields as needed */}
@@ -55,6 +87,16 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
               name="friend"
               multiple
               className="w-full border border-gray-300 p-2 rounded-md"
+              value={formData.selectedFriends}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  selectedFriends: Array.from(
+                    e.target.selectedOptions,
+                    (option) => option.value
+                  ),
+                })
+              }
             >
               {friends.map((friend, index) => (
                 <option key={index} value={friend}>
@@ -85,7 +127,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
       {/* Button to show modal */}
       <button
         onClick={showModal}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        className="bg-[#ff652f] hover:bg-[#ff5216] shadow-sm text-white text-sm font-semibold py-2 px-4 rounded"
       >
         Add an Expense
       </button>
