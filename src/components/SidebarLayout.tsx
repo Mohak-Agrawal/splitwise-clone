@@ -122,7 +122,7 @@ const SidebarLayout: React.FC = () => {
             <button onClick={() => addFriend("New Friend")}>Add Friend</button>
             <ul>
               {friends.map((friend, index) => (
-                <li key={index}>{friend}</li>
+                <li key={index}>{friend.name}</li>
               ))}
             </ul>
           </div>

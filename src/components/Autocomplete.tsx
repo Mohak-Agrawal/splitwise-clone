@@ -1,27 +1,32 @@
 import React, { useState } from "react";
 
+interface Option {
+  id: string;
+  name: string;
+}
+
 interface AutocompleteProps {
-  options: string[];
-  onSelect: (selected: string[]) => void;
+  options: Option[];
+  onSelect: (selected: Option[]) => void;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect }) => {
   const [inputValue, setInputValue] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<Option[]>([]);
   const [showOptions, setShowOptions] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setInputValue(inputValue);
     const filteredOptions = options.filter((option) =>
-      option.toLowerCase().includes(inputValue.toLowerCase())
+      option.name.toLowerCase().includes(inputValue.toLowerCase())
     );
     setFilteredOptions(filteredOptions);
     setShowOptions(true);
   };
 
-  const handleClick = (option: string) => {
+  const handleClick = (option: Option) => {
     const updatedSelectedOptions = [...selectedOptions, option];
     setSelectedOptions(updatedSelectedOptions);
     onSelect(updatedSelectedOptions);
@@ -29,9 +34,9 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect }) => {
     setShowOptions(false);
   };
 
-  const handleRemove = (option: string) => {
+  const handleRemove = (option: Option) => {
     const updatedSelectedOptions = selectedOptions.filter(
-      (item) => item !== option
+      (item) => item.id !== option.id
     );
     setSelectedOptions(updatedSelectedOptions);
     onSelect(updatedSelectedOptions);
@@ -46,12 +51,12 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect }) => {
         className="w-full border border-gray-300 p-2 rounded-md"
       />
       <div className="flex flex-wrap absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
-        {selectedOptions.map((option, index) => (
+        {selectedOptions.map((option) => (
           <div
-            key={index}
+            key={option.id}
             className="flex items-center m-1 bg-gray-100 rounded-md"
           >
-            <span className="p-1">{option}</span>
+            <span className="p-1">{option.name}</span>
             <button
               type="button"
               onClick={() => handleRemove(option)}
@@ -64,13 +69,13 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect }) => {
       </div>
       {showOptions && (
         <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1">
-          {filteredOptions.map((option, index) => (
+          {filteredOptions.map((option) => (
             <li
-              key={index}
+              key={option.id}
               onClick={() => handleClick(option)}
               className="p-2 cursor-pointer hover:bg-gray-100"
             >
-              {option}
+              {option.name}
             </li>
           ))}
         </ul>

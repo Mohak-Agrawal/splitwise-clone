@@ -1,4 +1,3 @@
-// contexts/ExpenseContext.tsx
 import React, {
   createContext,
   useState,
@@ -11,14 +10,21 @@ interface Expense {
   description: string;
   amount: number;
   friends: string[];
+  paidBy: string;
+  splitOption: string;
+}
+
+interface Friend {
+  id: string;
+  name: string;
 }
 
 interface ExpenseContextType {
   expenses: Expense[];
-  friends: string[];
+  friends: Friend[];
   theme: string;
   addExpense: (expense: Expense) => void;
-  addFriend: (friend: string) => void;
+  addFriend: (friendName: string) => void;
   toggleTheme: () => void;
 }
 
@@ -38,7 +44,7 @@ export const ExpenseProvider: React.FC<{ children: ReactNode }> = ({
     const storedExpenses = localStorage.getItem("expenses");
     return storedExpenses ? JSON.parse(storedExpenses) : [];
   });
-  const [friends, setFriends] = useState<string[]>(() => {
+  const [friends, setFriends] = useState<Friend[]>(() => {
     const storedFriends = localStorage.getItem("friends");
     return storedFriends ? JSON.parse(storedFriends) : [];
   });
@@ -51,8 +57,22 @@ export const ExpenseProvider: React.FC<{ children: ReactNode }> = ({
     setExpenses((prevExpenses) => [...prevExpenses, expense]);
   };
 
-  const addFriend = (friend: string) => {
-    setFriends((prevFriends) => [...prevFriends, friend]);
+  const addFriend = (friendName: string) => {
+    // Check if the friend already exists
+    const existingFriend = friends.find((friend) => friend.name === friendName);
+    if (existingFriend) {
+      console.log("Friend already exists!");
+      return;
+    }
+
+    // Generate a unique ID for the new friend
+    const newFriend: Friend = {
+      id: `${Date.now()}-${friendName}`, // Using current timestamp as a part of ID
+      name: friendName,
+    };
+
+    // Update the friends list
+    setFriends((prevFriends) => [...prevFriends, newFriend]);
   };
 
   const toggleTheme = () => {

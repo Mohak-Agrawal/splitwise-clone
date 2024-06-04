@@ -4,6 +4,11 @@ import Autocomplete from "./Autocomplete";
 
 interface ExpenseFormProps {}
 
+interface Option {
+  id: string;
+  name: string;
+}
+
 const ExpenseForm: React.FC<ExpenseFormProps> = () => {
   const { friends } = useContext(ExpenseContext);
   const { addExpense } = useContext(ExpenseContext);
@@ -12,6 +17,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
     amount: "",
     selectedFriends: [] as string[],
     splitOption: "equal",
+    paidBy: "me", // Default to "Me"
   });
   const [visible, setVisible] = useState(false);
 
@@ -22,6 +28,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
       amount: parseFloat(formData.amount),
       friends: formData.selectedFriends,
       splitOption: formData.splitOption,
+      paidBy: formData.paidBy as "string", // Ensure that paidBy is of type "string"
     };
     addExpense(expense);
     // Reset form data
@@ -30,13 +37,15 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
       amount: "",
       selectedFriends: [],
       splitOption: "equal",
+      paidBy: "me", // Reset to "Me" after submission
     });
     // Close modal
     setVisible(false);
   };
 
-  const handleSelectFriend = (selectedFriends: string[]) => {
-    setFormData({ ...formData, selectedFriends });
+  const handleSelectFriend = (selectedFriends: Option[]) => {
+    const friendNames = selectedFriends.map((friend) => friend.name);
+    setFormData({ ...formData, selectedFriends: friendNames });
   };
 
   return (
@@ -62,7 +71,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
                 >
                   Select Friends
                 </label>
-                <Autocomplete options={friends} onSelect={handleSelectFriend} />
+                {/* Transform friends array into options */}
+                <Autocomplete
+                  options={friends.map((friend) => ({
+                    id: friend.id,
+                    name: friend.name,
+                  }))}
+                  onSelect={handleSelectFriend}
+                />
               </div>
               <div className="mb-4">
                 <label
@@ -118,6 +134,31 @@ const ExpenseForm: React.FC<ExpenseFormProps> = () => {
                 >
                   <option value="equal">Split Equally</option>
                   <option value="exclude">Exclude</option>
+                  <option value="me">Me</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="paidBy"
+                  className="block text-gray-700 font-bold mb-2"
+                >
+                  Paid By
+                </label>
+                <select
+                  id="paidBy"
+                  name="paidBy"
+                  className="w-full border border-gray-300 p-2 rounded-md"
+                  value={formData.paidBy}
+                  onChange={(e) =>
+                    setFormData({ ...formData, paidBy: e.target.value })
+                  }
+                >
+                  <option value="me">Me</option>
+                  {formData?.selectedFriends.map((item, index) => (
+                    <option value={item} key={index}>
+                      {item}
+                    </option>
+                  ))}
                 </select>
               </div>
               <button
