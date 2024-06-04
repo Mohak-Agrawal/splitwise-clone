@@ -37,23 +37,7 @@ const Dashboard: React.FC = () => {
 
     console.log({ transactions });
 
-    // Calculate the amounts owed by you and owed to you
-    const owedByMe: Record<string, number> = {};
-    const owedToMe: Record<string, number> = {};
-
-    // Iterate through transactions to calculate owedByMe and owedToMe
-    Object.entries(transactions).forEach(([friend, transactionsArray]) => {
-      transactionsArray.forEach(({ amount }) => {
-        if (amount < 0) {
-          // If amount is negative, it means you owe the friend
-          owedToMe[friend] = (owedToMe[friend] || 0) + Math.abs(amount);
-        } else {
-          // If amount is positive, it means the friend owes you
-          owedByMe[friend] = (owedByMe[friend] || 0) + amount;
-        }
-      });
-    });
-
+    // Calculate the net amounts for each user
     const netAmounts: Record<string, number> = {};
 
     // Iterate through transactions to calculate net amounts
@@ -65,6 +49,7 @@ const Dashboard: React.FC = () => {
 
     console.log({ netAmounts });
 
+    // Divide netAmounts into two parts: amounts you owe and amounts you are owed
     const amountsOwedByMe: Record<string, number> = {};
     const amountsOwedToMe: Record<string, number> = {};
 
@@ -83,21 +68,14 @@ const Dashboard: React.FC = () => {
 
     return {
       transactions,
-      // owedByMe,
-      // owedToMe,
       amountsOwedByMe,
       amountsOwedToMe,
     };
   };
 
-  const {
-    transactions,
-    // owedByMe: amountsOwedByMe,
-    // owedToMe: amountsOwedToMe,
-    amountsOwedByMe,
-    amountsOwedToMe,
-  } = calculateAmounts();
+  const { transactions, amountsOwedByMe, amountsOwedToMe } = calculateAmounts();
   console.log(transactions);
+
   // Calculate the absolute total amount owed by you
   const totalOwedByYou = Math.abs(
     Object.values(amountsOwedByMe).reduce((total, amount) => total + amount, 0)
@@ -168,7 +146,7 @@ const Dashboard: React.FC = () => {
           <ul>
             {Object.entries(amountsOwedByMe).map(
               ([friendName, amount], index) => (
-                <li key={index} className="border-r mr-2 flex flex-col">
+                <li key={index} className="border-r flex flex-col  items-start">
                   <p className="text-md text-black">{friendName}</p>
                   <p
                     className={`text-md ${
@@ -183,13 +161,13 @@ const Dashboard: React.FC = () => {
           </ul>
         </div>
         <div className="w-full">
-          <h2 className="text-xl font-semibold text-[#a4a4a4] mb-4">
+          <h2 className="text-xl font-semibold text-[#a4a4a4] mb-4 text-right">
             You Are Owed
           </h2>
           <ul>
             {Object.entries(amountsOwedToMe).map(
               ([friendName, amount], index) => (
-                <li key={index} className="border-r mr-2 flex flex-col">
+                <li key={index} className=" flex flex-col items-end">
                   <p className="text-md text-black">{friendName}</p>
                   <p
                     className={`text-md ${
