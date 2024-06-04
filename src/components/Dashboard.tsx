@@ -12,62 +12,61 @@ const Dashboard: React.FC = () => {
   const calculateAmounts = () => {
     const you = "me";
 
-    const owedByMe: Record<string, number> = {};
-    const owedToMe: Record<string, number> = {};
-    const youOwe: Record<string, number> = {};
-    const youAreOwed: Record<string, number> = {};
-    const allFriends: Record<string, number> = {};
+    const transactions: Record<string, { amount: number }[]> = {};
 
+    // Iterate through expenses
     expenses.forEach((expense) => {
       const { amount, friends: expenseFriends, splitOption, paidBy } = expense;
       const splitAmount = amount / (expenseFriends.length + 1);
 
+      // Iterate through each friend involved in the expense
       expenseFriends.forEach((friend) => {
         if (friend !== paidBy || splitOption === "equal") {
           const amountToChange = paidBy === you ? splitAmount : -splitAmount;
 
-          if (friend === you) {
-            if (amountToChange > 0) {
-              youOwe[paidBy] = (youOwe[paidBy] || 0) + amountToChange;
-            } else {
-              youAreOwed[paidBy] = (youAreOwed[paidBy] || 0) - amountToChange;
-            }
-          } else if (paidBy === you) {
-            if (amountToChange > 0) {
-              youAreOwed[friend] = (youAreOwed[friend] || 0) + amountToChange;
-            } else {
-              youOwe[friend] = (youOwe[friend] || 0) - amountToChange;
-            }
-          } else {
-            owedByMe[friend] = (owedByMe[friend] || 0) + amountToChange;
-            owedToMe[paidBy] = (owedToMe[paidBy] || 0) + amountToChange;
-            if (amountToChange > 0) allFriends[friend] = amountToChange;
-            if (amountToChange < 0) allFriends[paidBy] = -amountToChange;
+          // Check if the friend exists in the transactions object
+          if (!transactions[friend]) {
+            transactions[friend] = [];
           }
+
+          // Add the transaction to the friend's array
+          transactions[friend].push({ amount: amountToChange });
         }
       });
     });
 
-    const totalBalance =
-      Object.values(owedByMe).reduce((acc, amount) => acc + amount, 0) -
-      Object.values(owedToMe).reduce((acc, amount) => acc + amount, 0);
+    console.log({ transactions });
+
+    // Calculate the amounts owed by you and owed to you
+    const owedByMe: Record<string, number> = {};
+    const owedToMe: Record<string, number> = {};
+
+    // Iterate through transactions to calculate owedByMe and owedToMe
+    Object.entries(transactions).forEach(([friend, transactionsArray]) => {
+      transactionsArray.forEach(({ amount }) => {
+        if (amount < 0) {
+          // If amount is negative, it means you owe the friend
+          owedToMe[friend] = (owedToMe[friend] || 0) + Math.abs(amount);
+        } else {
+          // If amount is positive, it means the friend owes you
+          owedByMe[friend] = (owedByMe[friend] || 0) + amount;
+        }
+      });
+    });
 
     return {
-      totalBalance,
+      transactions,
       owedByMe,
       owedToMe,
-      youOwe,
-      youAreOwed,
-      allFriends,
     };
   };
 
   const {
+    transactions,
     owedByMe: amountsOwedByMe,
     owedToMe: amountsOwedToMe,
-    totalBalance: totalNetAmount,
   } = calculateAmounts();
-
+  console.log(transactions);
   // Calculate the absolute total amount owed by you
   const totalOwedByYou = Math.abs(
     Object.values(amountsOwedByMe).reduce((total, amount) => total + amount, 0)
