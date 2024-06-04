@@ -1,49 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
+import { ExpenseContext } from "../contexts/ExpenseContext";
+import Autocomplete from "./Autocomplete";
 
-interface ExpenseFormProps {
-  friends: string[];
-}
+interface ExpenseFormProps {}
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
+const ExpenseForm: React.FC<ExpenseFormProps> = () => {
+  const { friends } = useContext(ExpenseContext);
+  const { addExpense } = useContext(ExpenseContext);
   const [formData, setFormData] = useState({
     description: "",
-    amount: "", // Keeping amount as a string to handle input properly
+    amount: "",
     selectedFriends: [] as string[],
+    splitOption: "equal",
   });
-
   const [visible, setVisible] = useState(false);
 
-  // Logic for handling form submission
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Retrieve the existing data from local storage
-    const oldData = JSON.parse(localStorage.getItem("expenseFormData") || "[]");
-    // Save the new data along with the old data
-    localStorage.setItem(
-      "expenseFormData",
-      JSON.stringify([...oldData, formData])
-    );
-    // Close the modal
+    const expense = {
+      description: formData.description,
+      amount: parseFloat(formData.amount),
+      friends: formData.selectedFriends,
+      splitOption: formData.splitOption,
+    };
+    addExpense(expense);
+    // Reset form data
+    setFormData({
+      description: "",
+      amount: "",
+      selectedFriends: [],
+      splitOption: "equal",
+    });
+    // Close modal
     setVisible(false);
-    // Reset the form data
-    setFormData({ description: "", amount: "", selectedFriends: [] });
   };
 
-  // Load form data from local storage on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem("expenseFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      if (Array.isArray(parsedData)) {
-        // Handle the parsed data if needed
-        console.log("Loaded data from local storage:", parsedData);
-      }
-    }
-  }, []);
+  const handleSelectFriend = (selectedFriends: string[]) => {
+    setFormData({ ...formData, selectedFriends });
+  };
 
   return (
     <div>
-      {/* Button to show modal */}
       <button
         onClick={() => setVisible(true)}
         className="bg-[#ff652f] hover:bg-[#ff5216] shadow-sm text-white text-sm font-semibold py-2 px-4 rounded"
@@ -57,83 +54,72 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ friends }) => {
               <h2 className="text-xl text-white font-bold">Add an Expense</h2>
             </div>
 
-            {/* Form content goes here */}
             <form onSubmit={handleSubmit} className="p-4">
-              {/* Add more form fields as needed */}
               <div className="mb-4">
                 <label
-                  htmlFor="friend"
+                  htmlFor="friends"
                   className="block text-gray-700 font-bold mb-2"
                 >
                   Select Friends
                 </label>
-                <select
-                  id="friend"
-                  name="friend"
-                  multiple
+                <Autocomplete options={friends} onSelect={handleSelectFriend} />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="description"
+                  className="block text-gray-700 font-bold mb-2"
+                >
+                  Description
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
                   className="w-full border border-gray-300 p-2 rounded-md"
-                  value={formData.selectedFriends}
+                  value={formData.description}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      selectedFriends: Array.from(
-                        e.target.selectedOptions,
-                        (option) => option.value
-                      ),
-                    })
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="amount"
+                  className="block text-gray-700 font-bold mb-2"
+                >
+                  Amount
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  className="w-full border border-gray-300 p-2 rounded-md"
+                  value={formData.amount}
+                  onChange={(e) =>
+                    setFormData({ ...formData, amount: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="splitOption"
+                  className="block text-gray-700 font-bold mb-2"
+                >
+                  Split Option
+                </label>
+                <select
+                  id="splitOption"
+                  name="splitOption"
+                  className="w-full border border-gray-300 p-2 rounded-md"
+                  value={formData.splitOption}
+                  onChange={(e) =>
+                    setFormData({ ...formData, splitOption: e.target.value })
                   }
                 >
-                  {friends.map((friend, index) => (
-                    <option key={index} value={friend}>
-                      {friend}
-                    </option>
-                  ))}
+                  <option value="equal">Split Equally</option>
+                  <option value="exclude">Exclude</option>
                 </select>
               </div>
-              {formData.selectedFriends.length > 0 && (
-                <>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="description"
-                      className="block text-gray-700 font-bold mb-2"
-                    >
-                      Description
-                    </label>
-                    <input
-                      type="text"
-                      id="description"
-                      name="description"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                      value={formData.description}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="amount"
-                      className="block text-gray-700 font-bold mb-2"
-                    >
-                      Amount
-                    </label>
-                    <input
-                      type="number"
-                      id="amount"
-                      name="amount"
-                      className="w-full border border-gray-300 p-2 rounded-md"
-                      value={formData.amount}
-                      onChange={(e) =>
-                        setFormData({ ...formData, amount: e.target.value })
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"

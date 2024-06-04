@@ -50,7 +50,7 @@ const Group: React.FC = () => {
           <div key={index} className="border p-4 my-2">
             <h3 className="text-lg font-bold">{group.name}</h3>
             <p>Friends: {group.friends.join(", ")}</p>
-            <ExpenseForm friends={group.friends} />
+            <ExpenseForm />
           </div>
         ))}
       </div>

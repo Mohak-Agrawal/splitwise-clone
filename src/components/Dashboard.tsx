@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
       <div className="border-b border-[#DDDDDD] p-4 flex flex-row items-center justify-between bg-[#eeeeee]">
         <h1 className="text-2xl font-bold text-center">Dashboard</h1>
         <div className="flex flex-row items-center">
-          <ExpenseForm friends={group.friends} />
+          <ExpenseForm />
           <AddFriendForm />
           <SettleUpForm friends={group.friends} />
         </div>

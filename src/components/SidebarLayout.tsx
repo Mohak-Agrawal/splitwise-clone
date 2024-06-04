@@ -6,7 +6,7 @@ import { ExpenseContext } from "../contexts/ExpenseContext";
 const SidebarLayout: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const { friends } = useContext(ExpenseContext); // Access the addFriend function from ExpenseContext
+  const { friends, addFriend } = useContext(ExpenseContext);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -119,7 +119,12 @@ const SidebarLayout: React.FC = () => {
         <Header />
         <div className="w-2/3 flex flex-row self-center h-screen">
           <div className="w-48 bg-gray-100">
-            {/* fetch friend list here and also have a button to add friend above list */}
+            <button onClick={() => addFriend("New Friend")}>Add Friend</button>
+            <ul>
+              {friends.map((friend, index) => (
+                <li key={index}>{friend}</li>
+              ))}
+            </ul>
           </div>
           <Dashboard />
           <div className="w-48 bg-gray-100"></div>
